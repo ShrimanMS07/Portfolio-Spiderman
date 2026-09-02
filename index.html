@@ -351,14 +351,22 @@
   }
   .proj-link{color:#9ca3af;flex-shrink:0;}
   .proj-link svg{width:18px;height:18px;}
-/* Standing Spider-Man left */
+/* Projects section */
+.projects-section {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Spider-Man - bottom left */
 .standing-spider {
     position: absolute;
-    bottom: 0;
     left: 20px;
-    top: auto;
+    bottom: 0;
 
-    z-index: 20;
+    top: auto;
+    right: auto;
+
+    z-index: 5;
     pointer-events: none;
 }
 
@@ -368,6 +376,7 @@
     display: block;
 
     filter: drop-shadow(0 4px 20px rgba(0,0,0,.2));
+
     animation: spiderBob 3.5s ease-in-out infinite;
 }
   /* ── CONTACT ── */
@@ -694,7 +703,7 @@
 </section>
 
 <!-- ══════════════════ PROJECTS ══════════════════ -->
-<section id="projects" class="section section-light" style="position:relative;">
+<section id="projects" class="section section-light projects-section">
   <!-- bg web top-right -->
   <svg class="bg-web" style="right:-60px;top:-60px;width:500px;height:500px;opacity:.05;" viewBox="0 0 400 400" fill="none">
     <g><line x1="400" y1="0" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="50" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="150" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="250" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="350" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><circle cx="400" cy="0" r="80" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="150" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="230" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="310" stroke="#a31515" stroke-width="1" fill="none"/></g>
