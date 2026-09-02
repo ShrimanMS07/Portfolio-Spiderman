@@ -45,41 +45,27 @@
   .web-tl{top:-20px;left:-20px;width:340px;height:340px;}
   .web-br{bottom:-20px;right:-20px;width:380px;height:380px;transform:rotate(180deg);}
 
-  /* Two full-bleed layers for the mask effect */
-  .hero-layer{
+  /* Container holding the two stacked hero images (full-bleed inside #hero) */
+  .hero-image-container{
     position:absolute;inset:0;
-    background-size:cover;background-position:center top;
-    background-repeat:no-repeat;
   }
-  /* Bottom layer — Spider-Man suit (always visible) */
-  #layer-bottom{
-    /* Spider-Man costume photo — we embed a placeholder gradient that looks like the dark suit,
-       the user should replace these with their actual two images */
-    background-image:url('https://i.imgur.com/placeholder.png');
-    /* Fallback: centered portrait of spiderman suit */
-    background:linear-gradient(180deg,#b91c1c 0%,#7f1d1d 40%,#1c1c1c 100%);
+  /* Both images occupy the exact same spatial grid */
+  .hero-image-container img{
+    position:absolute;top:0;left:0;
+    width:100%;height:100%;
+    object-fit:cover;object-position:center top;
+  }
+  /* Bottom layer — Jeyashmika's real face (always there, revealed through the spotlight) */
+  .base-face{
     z-index:1;
   }
-  /* Top layer — person's face revealed on hover */
-  #layer-top{
+  /* Top layer — intact Spider-Man mask, with a circular hole cut out at the cursor position */
+  .overlay-mask{
     z-index:2;
-    /* Mask starts hidden — will be controlled by JS */
-    -webkit-mask-image:radial-gradient(circle 0px at 50% 50%,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 40%,rgba(0,0,0,1) 100%);
-    mask-image:radial-gradient(circle 0px at 50% 50%,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 40%,rgba(0,0,0,1) 100%);
+    /* mask starts fully solid (no hole) — size/position updated live by JS */
+    -webkit-mask-image:radial-gradient(circle 0px at 50% 50%,transparent 0%,transparent 99%,#000 100%);
+    mask-image:radial-gradient(circle 0px at 50% 50%,transparent 0%,transparent 99%,#000 100%);
     -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-    transition:none;
-  }
-
-  /* Spider-Man centered image */
-  .spiderman-center{
-    position:absolute;
-    left:50%;top:0;
-    transform:translateX(-50%);
-    height:100%;
-    width:auto;max-width:60%;
-    object-fit:contain;object-position:top;
-    z-index:3;pointer-events:none;
-    filter:drop-shadow(0 0 40px rgba(0,0,0,.15));
   }
 
   /* Hero text left */
@@ -167,8 +153,15 @@
   }
   .container{max-width:1100px;margin:0 auto;padding:0 40px;}
 
-  /* Web background decorators */
-  .bg-web{position:absolute;pointer-events:none;}
+  /* Web background decorators — slow continuous rotation + gentle breathing */
+  .bg-web{position:absolute;pointer-events:none;animation:bgWebDrift 90s linear infinite;}
+  @keyframes bgWebDrift{
+    0%{transform:rotate(0deg) scale(1);}
+    50%{transform:rotate(180deg) scale(1.08);}
+    100%{transform:rotate(360deg) scale(1);}
+  }
+  /* Idle bob for small spider characters */
+  @keyframes spiderBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
 
   /* ── ABOUT ── */
   .about-layout{display:flex;gap:80px;align-items:flex-start;}
@@ -177,6 +170,9 @@
     position:relative;margin-top:0;
   }
   .about-thread{width:2px;height:220px;background:linear-gradient(to bottom,transparent,#a31515);}
+  /* Small spider character, left side of About */
+  .about-spider-left{position:absolute;bottom:24px;left:16px;z-index:5;pointer-events:none;opacity:.85;}
+  .about-spider-left-img{font-size:64px;line-height:1;filter:drop-shadow(0 3px 14px rgba(0,0,0,.18));animation:spiderBob 4s ease-in-out infinite;}
   .about-circle{
     width:280px;height:280px;border-radius:50%;
     border:6px solid #a31515;overflow:hidden;
@@ -280,7 +276,7 @@
 
   /* Standing spider man left */
   .standing-spider{position:absolute;bottom:0;left:20px;z-index:20;pointer-events:none;}
-  .standing-spider-img{font-size:120px;line-height:1;filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));}
+  .standing-spider-img{font-size:120px;line-height:1;filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));animation:spiderBob 3.5s ease-in-out infinite;}
 
   /* ── CONTACT ── */
   .contact-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:36px;}
@@ -346,7 +342,6 @@
     .section{padding:64px 0;}
     .standing-spider{display:none;}
     .hanging-spider{right:10px;}
-    .spiderman-center{max-width:90%;opacity:.5;}
   }
 </style>
 </head>
@@ -409,17 +404,13 @@
     </g>
   </svg>
 
-  <!-- Spider-Man center image (masked) -->
-  <!-- Bottom layer: Spider-Man suit face -->
-  <div class="hero-layer" id="layer-bottom" style="
-    background: url('https://upload.wikimedia.org/wikipedia/en/2/21/Web_of_Spider-Man_Vol_1_129-1.png') center top / cover no-repeat, 
-                linear-gradient(180deg,#c0392b 0%,#922b21 40%,#1a1a1a 100%);
-  "></div>
-
-  <!-- Top layer: Jeyashmika face (revealed on mouse move) -->
-  <div class="hero-layer" id="layer-top" style="background:url('jeyashmika-photo.jpg') center top / cover no-repeat;"></div>
-
-  <!-- Jeyashmika photo as top mask layer (CSS mask controlled by JS) -->
+  <!-- Hero photo + Spider-Man mask overlay -->
+  <div class="hero-image-container" id="heroImageContainer">
+    <!-- Jeyashmika's photo sits underneath -->
+    <img src="jeyashmika-photo.jpg" alt="Jeyashmika" class="base-face">
+    <!-- The Spider-Man mask sits directly on top, and fades away on hover/tap -->
+    <img src="spiderman-composite.jpg" alt="Spider-Man Mask" class="overlay-mask">
+  </div>
 
   <!-- Hero Text -->
   <div class="hero-text">
@@ -456,6 +447,11 @@
   <svg class="bg-web" style="right:-40px;bottom:40px;width:260px;height:260px;opacity:.06;" viewBox="0 0 400 400" fill="none">
     <g><line x1="200" y1="200" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="400" stroke="#a31515" stroke-width="1"/><circle cx="200" cy="200" r="60" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="120" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="180" stroke="#a31515" stroke-width="1" fill="none"/></g>
   </svg>
+
+  <!-- Small spider character, bottom-left -->
+  <div class="about-spider-left">
+    <div class="about-spider-left-img">🕷️</div>
+  </div>
 
   <div class="container">
     <div class="about-layout">
@@ -720,52 +716,70 @@ window.addEventListener('scroll',()=>{
 });
 
 // ── HERO MASK EFFECT ───────────────────────────
-const hero = document.getElementById('hero');
-const layerTop = document.getElementById('layer-top');
-let cx = window.innerWidth/2, cy = window.innerHeight/2;
-let tx = cx, ty = cy;
-let maskSize = 0;
-let targetSize = 0;
-let isHovered = false;
+// Bottom layer (.base-face) is a plain photo, always fully visible.
+// Top layer (.overlay-mask) is the torn Spider-Man composite. A CSS
+// mask on the top layer erases it in a growing area on hover, letting
+// the plain photo underneath show through. Mouse-leave closes it back up.
+const heroImageContainer = document.getElementById('heroImageContainer');
+const overlayMask = heroImageContainer ? heroImageContainer.querySelector('.overlay-mask') : null;
 
-// Smooth lerp animation
-function lerp(a,b,t){return a+(b-a)*t;}
+if (heroImageContainer && overlayMask) {
+  const rect0 = heroImageContainer.getBoundingClientRect();
+  let px = rect0.width / 2, py = rect0.height / 2; // current (smoothed) cursor position
+  let tx = px, ty = py;                            // target cursor position
+  let alpha = 1, targetAlpha = 1;                  // 1 = composite fully opaque, 0 = erased at center
+  let size = 50, targetSize = 50;                  // radius (px) of the erased zone
 
-function animateMask(){
-  cx = lerp(cx, tx, 0.1);
-  cy = lerp(cy, ty, 0.1);
-  maskSize = lerp(maskSize, targetSize, 0.08);
+  function lerp(a, b, t) { return a + (b - a) * t; }
 
-  const mask = `radial-gradient(circle ${maskSize}px at ${cx}px ${cy}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,1) 100%)`;
-  layerTop.style.webkitMaskImage = mask;
-  layerTop.style.maskImage = mask;
-  requestAnimationFrame(animateMask);
+  function paintMask() {
+    // faster smoothing for position (tracks the cursor closely),
+    // slower for alpha/size (gives the reveal/close a soft, elastic feel)
+    px = lerp(px, tx, 0.25);
+    py = lerp(py, ty, 0.25);
+    alpha = lerp(alpha, targetAlpha, 0.08);
+    size = lerp(size, targetSize, 0.08);
+
+    const mask = `radial-gradient(circle ${size}px at ${px}px ${py}px, rgba(0,0,0,${alpha}) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,1) 100%)`;
+    overlayMask.style.webkitMaskImage = mask;
+    overlayMask.style.maskImage = mask;
+
+    requestAnimationFrame(paintMask);
+  }
+  paintMask();
+
+  function setTargetFromEvent(clientX, clientY) {
+    const rect = heroImageContainer.getBoundingClientRect();
+    tx = clientX - rect.left;
+    ty = clientY - rect.top;
+  }
+
+  heroImageContainer.addEventListener('mousemove', e => setTargetFromEvent(e.clientX, e.clientY));
+  heroImageContainer.addEventListener('mouseenter', () => {
+    targetAlpha = 0;
+    targetSize = 700; // large enough to erase most of the composite near the cursor
+  });
+  heroImageContainer.addEventListener('mouseleave', () => {
+    targetAlpha = 1;
+    targetSize = 50;
+  });
+
+  // Touch support: press-and-drag reveals the same way
+  heroImageContainer.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    setTargetFromEvent(t.clientX, t.clientY);
+    targetAlpha = 0;
+    targetSize = 700;
+  }, { passive: true });
+  heroImageContainer.addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    setTargetFromEvent(t.clientX, t.clientY);
+  }, { passive: true });
+  heroImageContainer.addEventListener('touchend', () => {
+    targetAlpha = 1;
+    targetSize = 50;
+  });
 }
-animateMask();
-
-hero.addEventListener('mousemove', e => {
-  tx = e.clientX;
-  ty = e.clientY;
-});
-
-hero.addEventListener('mouseenter', () => {
-  isHovered = true;
-  targetSize = 180;
-});
-
-hero.addEventListener('mouseleave', () => {
-  isHovered = false;
-  targetSize = 0;
-});
-
-// Touch support
-hero.addEventListener('touchmove', e => {
-  const t = e.touches[0];
-  tx = t.clientX;
-  ty = t.clientY;
-  targetSize = 180;
-});
-hero.addEventListener('touchend', () => { targetSize = 0; });
 
 // ── MARQUEE ───────────────────────────────────
 const items = [
