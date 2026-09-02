@@ -351,11 +351,22 @@
   }
   .proj-link{color:#9ca3af;flex-shrink:0;}
   .proj-link svg{width:18px;height:18px;}
+/* Standing Spider-Man left */
+.standing-spider{
+    position:absolute;
+    bottom:0;
+    left:20px;
+    z-index:20;
+    pointer-events:none;
+}
 
-  /* Standing spider man left */
-  .standing-spider{position:absolute;bottom:0;left:20px;z-index:20;pointer-events:none;}
-  .standing-spider-img{font-size:120px;line-height:1;filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));animation:spiderBob 3.5s ease-in-out infinite;}
-
+.standing-spider-img{
+    width:90px;
+    height:auto;
+    display:block;
+    filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));
+    animation:spiderBob 3.5s ease-in-out infinite;
+}
   /* ── CONTACT ── */
   .contact-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:36px;}
   .contact-link{
