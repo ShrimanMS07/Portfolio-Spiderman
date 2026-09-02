@@ -41,15 +41,14 @@
   }
 
   /* Web corner images (SVG inline) — sit above the hero photo, like the reference */
-  .web-corner{position:absolute;pointer-events:none;opacity:.55;z-index:5;}
+  .web-corner{position:absolute;pointer-events:none;opacity:.55;z-index:5;animation:bgWebDrift 90s linear infinite;}
   .web-tl{top:-20px;left:-20px;width:340px;height:340px;}
   .web-br{bottom:-20px;right:-20px;width:380px;height:380px;transform:rotate(180deg);}
 
   /* Container holding the two stacked hero images — right side only, so it
      never overlaps the text on the left and doesn't over-zoom a face-crop photo */
   .hero-image-container{
-    position:absolute;top:0;right:0;
-    width:58%;height:100%;
+  position:absolute;inset:0;
   }
   /* Both images occupy the exact same spatial grid */
   .hero-image-container img{
