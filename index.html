@@ -405,26 +405,76 @@
   .footer-right{color:#374151;font-size:10px;}
 
   /* ── MOBILE ── */
-  @media(max-width:768px){
-    #navbar{padding:14px 20px;}
-    .nav-links{display:none;}
-    .hero-text{left:4%;max-width:90%;}
-    .hero-name{font-size:52px;}
-    .about-layout{flex-direction:column-reverse;gap:40px;}
-    .about-right{width:100%;align-items:center;}
-    .about-circle{width:220px;height:220px;}
-    .skills-grid{grid-template-columns:1fr;}
-    .projects-grid{grid-template-columns:1fr;}
-    .form-row{grid-template-columns:1fr;}
-    .container{padding:0 20px;}
-    .section{padding:64px 0;}
-    .standing-spider{display:none;}
-    .hanging-spider{right:10px;}
-  }
+@media(max-width:768px){
+
+    #navbar{
+        padding:14px 20px;
+    }
+
+    /* When scrolling on mobile */
+    #navbar.scrolled{
+        padding:10px 20px;
+    }
+
+    .nav-links{
+        display:none;
+    }
+
+    .hero-text{
+        left:4%;
+        max-width:90%;
+    }
+
+    .hero-name{
+        font-size:52px;
+    }
+
+    .about-layout{
+        flex-direction:column-reverse;
+        gap:40px;
+    }
+
+    .about-right{
+        width:100%;
+        align-items:center;
+    }
+
+    .about-circle{
+        width:220px;
+        height:220px;
+    }
+
+    .skills-grid{
+        grid-template-columns:1fr;
+    }
+
+    .projects-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-row{
+        grid-template-columns:1fr;
+    }
+
+    .container{
+        padding:0 20px;
+    }
+
+    .section{
+        padding:64px 0;
+    }
+
+    .standing-spider{
+        display:none;
+    }
+
+    .hanging-spider{
+        right:10px;
+    }
+}
 </style>
 </head>
 <body>
-
 <!-- ══════════════════ NAVBAR ══════════════════ -->
 <nav id="navbar">
   <a href="#" class="nav-logo"><span>J</span>EYASHMIKA.</a>
@@ -637,9 +687,9 @@
   </svg>
 
   <!-- Standing Spider-Man bottom-left -->
-  <div class="standing-spider">
-    <div class="standing-spider-img">🦸</div>
-  </div>
+  <img src="spiderman.png" 
+     alt="Spider-Man character" 
+     class="standing-spider-img">
 
   <div class="container">
     <div class="section-header" data-aos>
