@@ -10,95 +10,30 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{font-family:'Montserrat',sans-serif;background:#fff;color:#111;overflow-x:hidden;}
-/* ── NAVBAR ── */
-#navbar{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index:999;
 
-    /* Transparent at top */
-    background:transparent;
+  /* ── NAVBAR ── */
+  #navbar{
+    position:fixed;top:0;left:0;width:100%;z-index:999;
+    background:transparent;padding:16px 48px;
+    display:flex;align-items:center;justify-content:space-between;
+    transition:background .35s ease,padding .3s ease,box-shadow .35s ease;
+  }
+  #navbar.scrolled{background:rgba(17,17,17,.97);padding:10px 48px;box-shadow:0 4px 30px rgba(0,0,0,.3);}
+  .nav-logo{font-size:22px;font-weight:900;font-style:italic;color:#fff;text-decoration:none;letter-spacing:-.03em;transition:color .25s ease;cursor:pointer;}
+  .nav-logo span{color:#ef4b43;transition:color .25s ease;}
+  .nav-logo:hover,.nav-logo:hover span{color:#ef4b43;}
+  .nav-links{display:flex;gap:36px;list-style:none;}
+  .nav-links a{
+    color:#9ca3af;font-size:11px;font-weight:700;letter-spacing:.15em;
+    text-transform:uppercase;text-decoration:none;position:relative;transition:color .3s;
+  }
+  .nav-links a::after{
+    content:'';position:absolute;bottom:-6px;left:0;width:0;height:2px;
+    background:#a31515;transition:width .3s;box-shadow:0 0 8px rgba(163,21,21,.8);
+  }
+  .nav-links a:hover{color:#fff;}
+  .nav-links a:hover::after{width:100%;}
 
-    padding:16px 48px;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    transition:
-        background .35s ease,
-        padding .3s ease,
-        box-shadow .35s ease;
-}
-
-/* Black header appears after scrolling */
-#navbar.scrolled{
-    background:rgba(17,17,17,.97);
-    padding:10px 48px;
-    box-shadow:0 4px 30px rgba(0,0,0,.3);
-}
-
-/* Logo */
-.nav-logo{
-    font-size:22px;
-    font-weight:900;
-    font-style:italic;
-    color:#fff;
-    text-decoration:none;
-    letter-spacing:-.03em;
-    transition:color .25s ease;
-}
-
-/* Normal J remains red */
-.nav-logo span{
-    color:#ef4b43;
-    transition:color .25s ease;
-}
-
-/* Hover anywhere on logo → FULL logo red */
-.nav-logo:hover,
-.nav-logo:hover span{
-    color:#ef4b43;
-}
-
-.nav-links{
-    display:flex;
-    gap:36px;
-    list-style:none;
-}
-
-.nav-links a{
-    color:#9ca3af;
-    font-size:11px;
-    font-weight:700;
-    letter-spacing:.15em;
-    text-transform:uppercase;
-    text-decoration:none;
-    position:relative;
-    transition:color .3s;
-}
-
-.nav-links a::after{
-    content:'';
-    position:absolute;
-    bottom:-6px;
-    left:0;
-    width:0;
-    height:2px;
-    background:#ef4b43;
-    transition:width .3s;
-    box-shadow:0 0 8px rgba(239,75,67,.8);
-}
-
-.nav-links a:hover{
-    color:#fff;
-}
-
-.nav-links a:hover::after{
-    width:100%;
-}
   /* ── HERO ── */
   #hero{
     position:relative;width:100%;height:100vh;
@@ -351,34 +286,11 @@
   }
   .proj-link{color:#9ca3af;flex-shrink:0;}
   .proj-link svg{width:18px;height:18px;}
-/* Projects section */
-.projects-section {
-    position: relative;
-    overflow: hidden;
-}
 
-/* Spider-Man - bottom left */
-.standing-spider {
-    position: absolute;
-    left: 20px;
-    bottom: 0;
+  /* Standing spider man left */
+  .standing-spider{position:absolute !important;left:20px !important;bottom:10px !important;top:auto !important;right:auto !important;z-index:20;pointer-events:none;}
+  .standing-spider-img{width:90px;height:auto;display:block;filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));animation:spiderBob 3.5s ease-in-out infinite;}
 
-    top: auto;
-    right: auto;
-
-    z-index: 5;
-    pointer-events: none;
-}
-
-.standing-spider-img {
-    width: 90px;
-    height: auto;
-    display: block;
-
-    filter: drop-shadow(0 4px 20px rgba(0,0,0,.2));
-
-    animation: spiderBob 3.5s ease-in-out infinite;
-}
   /* ── CONTACT ── */
   .contact-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:36px;}
   .contact-link{
@@ -428,76 +340,26 @@
   .footer-right{color:#374151;font-size:10px;}
 
   /* ── MOBILE ── */
-@media(max-width:768px){
-
-    #navbar{
-        padding:14px 20px;
-    }
-
-    /* When scrolling on mobile */
-    #navbar.scrolled{
-        padding:10px 20px;
-    }
-
-    .nav-links{
-        display:none;
-    }
-
-    .hero-text{
-        left:4%;
-        max-width:90%;
-    }
-
-    .hero-name{
-        font-size:52px;
-    }
-
-    .about-layout{
-        flex-direction:column-reverse;
-        gap:40px;
-    }
-
-    .about-right{
-        width:100%;
-        align-items:center;
-    }
-
-    .about-circle{
-        width:220px;
-        height:220px;
-    }
-
-    .skills-grid{
-        grid-template-columns:1fr;
-    }
-
-    .projects-grid{
-        grid-template-columns:1fr;
-    }
-
-    .form-row{
-        grid-template-columns:1fr;
-    }
-
-    .container{
-        padding:0 20px;
-    }
-
-    .section{
-        padding:64px 0;
-    }
-
-    .standing-spider{
-        display:none;
-    }
-
-    .hanging-spider{
-        right:10px;
-    }
-}
+  @media(max-width:768px){
+    #navbar{padding:14px 20px;}
+    #navbar.scrolled{padding:10px 20px;}
+    .nav-links{display:none;}
+    .hero-text{left:4%;max-width:90%;}
+    .hero-name{font-size:52px;}
+    .about-layout{flex-direction:column-reverse;gap:40px;}
+    .about-right{width:100%;align-items:center;}
+    .about-circle{width:220px;height:220px;}
+    .skills-grid{grid-template-columns:1fr;}
+    .projects-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    .container{padding:0 20px;}
+    .section{padding:64px 0;}
+    .hanging-spider{right:10px;}
+  }
 </style>
 </head>
 <body>
+
 <!-- ══════════════════ NAVBAR ══════════════════ -->
 <nav id="navbar">
   <a href="#" class="nav-logo"><span>J</span>EYASHMIKA.</a>
@@ -703,16 +565,16 @@
 </section>
 
 <!-- ══════════════════ PROJECTS ══════════════════ -->
-<section id="projects" class="section section-light projects-section">
+<section id="projects" class="section section-light" style="position:relative;">
   <!-- bg web top-right -->
   <svg class="bg-web" style="right:-60px;top:-60px;width:500px;height:500px;opacity:.05;" viewBox="0 0 400 400" fill="none">
     <g><line x1="400" y1="0" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="50" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="150" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="250" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="350" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><circle cx="400" cy="0" r="80" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="150" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="230" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="310" stroke="#a31515" stroke-width="1" fill="none"/></g>
   </svg>
 
   <!-- Standing Spider-Man bottom-left -->
-  <img src="spiderman.png" 
-     alt="Spider-Man character" 
-     class="standing-spider-img">
+  <div class="standing-spider">
+    <img src="spiderman-character.png" alt="Spider-Man" class="standing-spider-img">
+  </div>
 
   <div class="container">
     <div class="section-header" data-aos>
