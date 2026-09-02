@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Jeyashmika D K — Portfolio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Montserrat',sans-serif;background:#fff;color:#111;overflow-x:hidden;}
+
+  /* ── NAVBAR ── */
+  #navbar{
+    position:fixed;top:0;left:0;width:100%;z-index:999;
+    background:#111;padding:16px 48px;
+    display:flex;align-items:center;justify-content:space-between;
+    transition:padding .3s,box-shadow .3s;
+  }
+  #navbar.scrolled{padding:10px 48px;box-shadow:0 4px 30px rgba(0,0,0,.3);}
+  .nav-logo{font-size:22px;font-weight:900;font-style:italic;color:#fff;text-decoration:none;letter-spacing:-.03em;}
+  .nav-logo span{color:#a31515;}
+  .nav-links{display:flex;gap:36px;list-style:none;}
+  .nav-links a{
+    color:#9ca3af;font-size:11px;font-weight:700;letter-spacing:.15em;
+    text-transform:uppercase;text-decoration:none;position:relative;transition:color .3s;
+  }
+  .nav-links a::after{
+    content:'';position:absolute;bottom:-6px;left:0;width:0;height:2px;
+    background:#a31515;transition:width .3s;box-shadow:0 0 8px rgba(163,21,21,.8);
+  }
+  .nav-links a:hover{color:#fff;}
+  .nav-links a:hover::after{width:100%;}
+
+  /* ── HERO ── */
+  #hero{
+    position:relative;width:100%;height:100vh;
+    background:#f5f5f5;overflow:hidden;cursor:crosshair;
+    display:flex;align-items:center;
+  }
+
+  /* Web corner images (SVG inline) */
+  .web-corner{position:absolute;pointer-events:none;opacity:.55;}
+  .web-tl{top:-20px;left:-20px;width:340px;height:340px;}
+  .web-br{bottom:-20px;right:-20px;width:380px;height:380px;transform:rotate(180deg);}
+
+  /* Two full-bleed layers for the mask effect */
+  .hero-layer{
+    position:absolute;inset:0;
+    background-size:cover;background-position:center top;
+    background-repeat:no-repeat;
+  }
+  /* Bottom layer — Spider-Man suit (always visible) */
+  #layer-bottom{
+    /* Spider-Man costume photo — we embed a placeholder gradient that looks like the dark suit,
+       the user should replace these with their actual two images */
+    background-image:url('https://i.imgur.com/placeholder.png');
+    /* Fallback: centered portrait of spiderman suit */
+    background:linear-gradient(180deg,#b91c1c 0%,#7f1d1d 40%,#1c1c1c 100%);
+    z-index:1;
+  }
+  /* Top layer — person's face revealed on hover */
+  #layer-top{
+    z-index:2;
+    /* Mask starts hidden — will be controlled by JS */
+    -webkit-mask-image:radial-gradient(circle 0px at 50% 50%,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 40%,rgba(0,0,0,1) 100%);
+    mask-image:radial-gradient(circle 0px at 50% 50%,rgba(0,0,0,1) 0%,rgba(0,0,0,.85) 40%,rgba(0,0,0,1) 100%);
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    transition:none;
+  }
+
+  /* Spider-Man centered image */
+  .spiderman-center{
+    position:absolute;
+    left:50%;top:0;
+    transform:translateX(-50%);
+    height:100%;
+    width:auto;max-width:60%;
+    object-fit:contain;object-position:top;
+    z-index:3;pointer-events:none;
+    filter:drop-shadow(0 0 40px rgba(0,0,0,.15));
+  }
+
+  /* Hero text left */
+  .hero-text{
+    position:absolute;left:5%;top:50%;transform:translateY(-50%);
+    z-index:10;max-width:480px;
+  }
+  .hero-eyebrow{
+    color:#a31515;font-weight:700;font-size:11px;
+    letter-spacing:.25em;text-transform:uppercase;margin-bottom:14px;
+  }
+  .hero-name{
+    font-size:clamp(52px,7vw,90px);font-weight:900;font-style:italic;
+    line-height:.95;letter-spacing:-.04em;text-transform:uppercase;
+    color:#111;
+    text-shadow:4px 4px 0 #a31515,7px 7px 0 #5a0808;
+    margin-bottom:28px;
+  }
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn-red{
+    background:#a31515;color:#fff;padding:13px 28px;border-radius:8px;
+    font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    text-decoration:none;border:none;cursor:pointer;
+    box-shadow:0 6px 20px rgba(163,21,21,.4);transition:all .3s;display:inline-block;
+  }
+  .btn-red:hover{background:#7a0f0f;transform:translateY(-2px);box-shadow:0 10px 28px rgba(163,21,21,.5);}
+  .btn-dark{
+    background:#111;color:#fff;padding:13px 28px;border-radius:8px;
+    font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+    text-decoration:none;border:none;cursor:pointer;display:inline-flex;
+    align-items:center;gap:8px;transition:all .3s;
+  }
+  .btn-dark:hover{background:#000;transform:translateY(-2px);}
+
+  /* ── MARQUEE ── */
+  .marquee-section{
+    position:relative;width:100%;background:#fff;overflow:hidden;
+    padding:28px 0;display:flex;flex-direction:column;gap:0;
+  }
+  .marquee-strip{
+    width:100%;overflow:hidden;padding:10px 0;
+  }
+  .marquee-strip.red{
+    background:#a31515;border-top:3px solid #111;border-bottom:3px solid #111;
+    transform:rotate(-2deg) scaleX(1.06);margin-bottom:-4px;
+  }
+  .marquee-strip.black{
+    background:#111;border-top:3px solid #a31515;
+    transform:rotate(2deg) scaleX(1.06);
+  }
+  .marquee-track{
+    display:flex;gap:0;width:max-content;
+  }
+  .marquee-track.left{animation:scrollLeft 20s linear infinite;}
+  .marquee-track.right{animation:scrollRight 24s linear infinite;}
+  .marquee-item{
+    font-weight:900;font-size:13px;font-style:italic;
+    letter-spacing:.15em;text-transform:uppercase;
+    white-space:nowrap;padding:0 24px;display:flex;align-items:center;gap:20px;
+  }
+  .marquee-strip.red .marquee-item{color:#fff;}
+  .marquee-strip.black .marquee-item{color:#a31515;}
+  .marquee-dot{font-size:8px;opacity:.4;}
+
+  @keyframes scrollLeft{from{transform:translateX(0);}to{transform:translateX(-33.33%);}}
+  @keyframes scrollRight{from{transform:translateX(-33.33%);}to{transform:translateX(0);}}
+
+  /* ── SECTION COMMON ── */
+  .section{padding:96px 0;position:relative;overflow:hidden;}
+  .section-white{background:#fff;}
+  .section-light{background:#f7f7f7;}
+  .section-header{text-align:center;margin-bottom:52px;}
+  .section-eyebrow{
+    color:#a31515;font-weight:700;font-size:10px;
+    letter-spacing:.25em;text-transform:uppercase;margin-bottom:8px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .section-title{
+    font-size:clamp(36px,5vw,64px);font-weight:900;font-style:italic;
+    text-transform:uppercase;letter-spacing:-.04em;color:#111;
+    text-shadow:2px 2px 0 #fca5a5;line-height:1;margin-bottom:10px;
+  }
+  .section-underline{
+    width:48px;height:4px;background:#a31515;border-radius:2px;margin:0 auto;
+  }
+  .container{max-width:1100px;margin:0 auto;padding:0 40px;}
+
+  /* Web background decorators */
+  .bg-web{position:absolute;pointer-events:none;}
+
+  /* ── ABOUT ── */
+  .about-layout{display:flex;gap:80px;align-items:flex-start;}
+  .about-right{
+    flex:0 0 auto;display:flex;flex-direction:column;align-items:center;
+    position:relative;margin-top:0;
+  }
+  .about-thread{width:2px;height:220px;background:linear-gradient(to bottom,transparent,#a31515);}
+  .about-circle{
+    width:280px;height:280px;border-radius:50%;
+    border:6px solid #a31515;overflow:hidden;
+    box-shadow:0 20px 60px rgba(163,21,21,.25);
+    margin-top:-8px;flex-shrink:0;
+  }
+  .about-circle img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:grayscale(100%);}
+  .about-circle img:hover{filter:grayscale(0%);transition:filter .5s;}
+  .about-left{flex:1;}
+  .about-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    color:#a31515;font-weight:700;font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;margin-bottom:16px;
+  }
+  .about-name{
+    font-size:clamp(40px,5.5vw,72px);font-weight:900;font-style:italic;
+    text-transform:uppercase;letter-spacing:-.04em;color:#111;
+    text-shadow:2px 2px 0 #fca5a5;line-height:1;margin-bottom:24px;
+  }
+  .about-text{color:#374151;font-size:15px;line-height:1.75;font-weight:500;max-width:520px;margin-bottom:12px;}
+  .stack-label{
+    font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+    color:#9ca3af;border-bottom:1px solid #e5e7eb;padding-bottom:8px;
+    display:inline-block;margin-bottom:16px;margin-top:20px;
+  }
+  .pills{display:flex;flex-wrap:wrap;gap:10px;}
+  .pill{
+    padding:8px 18px;border:1.5px solid rgba(163,21,21,.3);background:#fff;
+    color:#a31515;border-radius:12px;font-size:12px;font-weight:700;
+    cursor:default;transition:all .3s;
+  }
+  .pill:hover{background:#a31515;color:#fff;transform:translateY(-3px);box-shadow:0 8px 20px rgba(163,21,21,.3);}
+
+  /* Stats row */
+  .stats-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px;}
+  .stat-box{
+    background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;
+    padding:12px 18px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);min-width:90px;
+  }
+  .stat-val{font-weight:900;font-size:22px;color:#a31515;line-height:1;}
+  .stat-lbl{font-size:9px;color:#6b7280;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-top:3px;}
+
+  /* ── SKILLS ── */
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .skill-card{
+    background:#f9f9f9;border:1.5px solid #e5e7eb;border-radius:14px;
+    padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+    cursor:pointer;transition:all .3s;box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .skill-card:hover{
+    background:#a31515;border-color:#a31515;
+    transform:translateY(-2px);box-shadow:0 10px 28px rgba(163,21,21,.2);
+  }
+  .skill-card:hover .sk-name{color:#fff;}
+  .skill-card:hover .sk-cat{color:#fca5a5;}
+  .skill-card:hover .sk-level{background:#000;color:#fff;}
+  .skill-dot{width:8px;height:8px;border-radius:50%;background:#a31515;flex-shrink:0;box-shadow:0 0 8px rgba(163,21,21,.5);}
+  .skill-info{display:flex;align-items:center;gap:12px;}
+  .sk-name{font-weight:900;font-size:13px;text-transform:uppercase;color:#111;letter-spacing:-.01em;transition:color .3s;}
+  .sk-cat{font-size:9px;font-weight:700;color:#9ca3af;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;transition:color .3s;}
+  .sk-level{
+    font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:4px 12px;background:#fff;color:#374151;border-radius:20px;
+    transition:all .3s;box-shadow:0 1px 4px rgba(0,0,0,.08);white-space:nowrap;
+  }
+  /* Hanging spider right */
+  .hanging-spider{position:absolute;top:0;right:80px;z-index:20;display:flex;flex-direction:column;align-items:center;}
+  .spider-thread{width:2px;background:linear-gradient(to bottom,transparent,#888);opacity:.5;}
+  .spider-emoji{font-size:56px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.25));animation:swing 3s ease-in-out infinite alternate;}
+  @keyframes swing{0%{transform:rotate(-8deg);}100%{transform:rotate(8deg);}}
+
+  /* ── PROJECTS ── */
+  .projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .proj-card{
+    background:#fff;border:1.5px solid #e5e7eb;border-radius:16px;
+    padding:26px;display:flex;flex-direction:column;justify-content:space-between;
+    cursor:pointer;position:relative;overflow:hidden;
+    transition:all .35s;box-shadow:0 2px 8px rgba(0,0,0,.05);
+  }
+  .proj-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:#a31515;transform:scaleX(0);transform-origin:left;transition:transform .4s ease;
+  }
+  .proj-card:hover::before{transform:scaleX(1);}
+  .proj-card:hover{border-color:#a31515;transform:translateY(-4px);box-shadow:0 16px 40px rgba(163,21,21,.15);}
+  .proj-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;}
+  .proj-title{font-weight:900;font-size:14px;text-transform:uppercase;letter-spacing:-.01em;color:#111;line-height:1.2;}
+  .proj-badge{
+    background:#fef2f2;color:#a31515;border:1px solid rgba(163,21,21,.2);
+    font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;
+  }
+  .proj-desc{font-size:13px;color:#6b7280;line-height:1.65;font-weight:500;margin-bottom:20px;}
+  .proj-tags{display:flex;flex-wrap:wrap;gap:6px;padding-top:12px;border-top:1px solid #f3f4f6;}
+  .proj-tag{
+    font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    padding:3px 10px;background:#f9f9f9;border:1px solid #e5e7eb;color:#374151;border-radius:6px;
+  }
+  .proj-link{color:#9ca3af;flex-shrink:0;}
+  .proj-link svg{width:18px;height:18px;}
+
+  /* Standing spider man left */
+  .standing-spider{position:absolute;bottom:0;left:20px;z-index:20;pointer-events:none;}
+  .standing-spider-img{font-size:120px;line-height:1;filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));}
+
+  /* ── CONTACT ── */
+  .contact-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:36px;}
+  .contact-link{
+    display:flex;align-items:center;gap:8px;padding:10px 20px;
+    border:1.5px solid #e5e7eb;border-radius:10px;
+    font-size:12px;font-weight:700;color:#374151;text-decoration:none;transition:all .3s;
+  }
+  .contact-link:hover{border-color:#a31515;color:#a31515;background:#fff5f5;}
+  .contact-form-wrap{
+    background:#f9f9f9;border:1.5px solid #e5e7eb;border-radius:20px;
+    padding:36px;max-width:680px;margin:0 auto;
+    box-shadow:0 4px 20px rgba(0,0,0,.05);
+  }
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-label{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#6b7280;}
+  .form-input, .form-textarea{
+    width:100%;padding:13px 16px;background:#fff;border:1.5px solid #e5e7eb;
+    border-radius:12px;font-size:13px;font-weight:500;color:#111;
+    font-family:inherit;outline:none;transition:border-color .3s;resize:none;
+  }
+  .form-input:focus, .form-textarea:focus{border-color:#a31515;}
+  .form-submit{
+    width:100%;background:#a31515;color:#fff;padding:15px;border-radius:12px;
+    font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    border:none;cursor:pointer;transition:all .3s;
+    box-shadow:0 6px 20px rgba(163,21,21,.35);margin-top:4px;font-family:inherit;
+  }
+  .form-submit:hover{background:#7a0f0f;transform:translateY(-2px);box-shadow:0 10px 28px rgba(163,21,21,.5);}
+  .success-msg{text-align:center;padding:48px 0;display:none;}
+  .success-check{
+    width:56px;height:56px;background:#a31515;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;color:#fff;font-weight:900;margin:0 auto 16px;
+    box-shadow:0 6px 20px rgba(163,21,21,.35);animation:bounce .6s ease;
+  }
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .success-title{font-weight:900;font-size:20px;text-transform:uppercase;letter-spacing:-.02em;color:#111;margin-bottom:8px;}
+  .success-sub{color:#6b7280;font-size:13px;}
+
+  /* ── FOOTER ── */
+  footer{background:#111;padding:32px 40px;border-top:1px solid rgba(163,21,21,.3);}
+  .footer-inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;}
+  .footer-logo{font-size:20px;font-weight:900;font-style:italic;color:#fff;text-decoration:none;}
+  .footer-logo span{color:#a31515;}
+  .footer-mid{color:#6b7280;font-size:11px;text-align:center;}
+  .footer-right{color:#374151;font-size:10px;}
+
+  /* ── MOBILE ── */
+  @media(max-width:768px){
+    #navbar{padding:14px 20px;}
+    .nav-links{display:none;}
+    .hero-text{left:4%;max-width:90%;}
+    .hero-name{font-size:52px;}
+    .about-layout{flex-direction:column-reverse;gap:40px;}
+    .about-right{width:100%;align-items:center;}
+    .about-circle{width:220px;height:220px;}
+    .skills-grid{grid-template-columns:1fr;}
+    .projects-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    .container{padding:0 20px;}
+    .section{padding:64px 0;}
+    .standing-spider{display:none;}
+    .hanging-spider{right:10px;}
+    .spiderman-center{max-width:90%;opacity:.5;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ NAVBAR ══════════════════ -->
+<nav id="navbar">
+  <a href="#" class="nav-logo"><span>J</span>EYASHMIKA.</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section id="hero">
+
+  <!-- Corner web SVGs -->
+  <svg class="web-corner web-tl" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.55">
+      <line x1="0" y1="0" x2="400" y2="400" stroke="#555" stroke-width="1.2"/>
+      <line x1="0" y1="0" x2="350" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="280" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="200" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="120" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="50" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="350" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="280" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="200" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="120" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="50" stroke="#555" stroke-width="1"/>
+      <ellipse cx="0" cy="0" rx="80" ry="80" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="150" ry="150" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="230" ry="230" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="310" ry="310" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="390" ry="390" stroke="#555" stroke-width="1" fill="none"/>
+    </g>
+  </svg>
+
+  <svg class="web-corner web-br" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.55">
+      <line x1="0" y1="0" x2="400" y2="400" stroke="#555" stroke-width="1.2"/>
+      <line x1="0" y1="0" x2="350" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="280" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="200" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="120" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="50" y2="400" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="350" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="280" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="200" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="120" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="0" x2="400" y2="50" stroke="#555" stroke-width="1"/>
+      <ellipse cx="0" cy="0" rx="80" ry="80" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="150" ry="150" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="230" ry="230" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="310" ry="310" stroke="#555" stroke-width="1" fill="none"/>
+      <ellipse cx="0" cy="0" rx="390" ry="390" stroke="#555" stroke-width="1" fill="none"/>
+    </g>
+  </svg>
+
+  <!-- Spider-Man center image (masked) -->
+  <!-- Bottom layer: Spider-Man suit face -->
+  <div class="hero-layer" id="layer-bottom" style="
+    background: url('https://upload.wikimedia.org/wikipedia/en/2/21/Web_of_Spider-Man_Vol_1_129-1.png') center top / cover no-repeat, 
+                linear-gradient(180deg,#c0392b 0%,#922b21 40%,#1a1a1a 100%);
+  "></div>
+
+  <!-- Top layer: Jeyashmika face (revealed on mouse move) -->
+  <div class="hero-layer" id="layer-top" style="background:url('jeyashmika-photo.jpg') center top / cover no-repeat;"></div>
+
+  <!-- Jeyashmika photo as top mask layer (CSS mask controlled by JS) -->
+
+  <!-- Hero Text -->
+  <div class="hero-text">
+    <div class="hero-eyebrow">Your Friendly Neighborhood Engineer</div>
+    <h1 class="hero-name">JEYASHMIKA.<br></h1>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-red">Explore Projects</a>
+      <a href="Jeyashmika_Resume.pdf" download class="btn-dark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Resume PDF
+      </a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════ MARQUEE ══════════════════ -->
+<div class="marquee-section">
+  <div class="marquee-strip red">
+    <div class="marquee-track left" id="mq1"></div>
+  </div>
+  <div class="marquee-strip black">
+    <div class="marquee-track right" id="mq2"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ ABOUT ══════════════════ -->
+<section id="about" class="section section-light">
+  <!-- bg web left -->
+  <svg class="bg-web" style="left:-60px;top:40px;width:280px;height:280px;opacity:.06;" viewBox="0 0 400 400" fill="none">
+    <g><line x1="200" y1="200" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="400" stroke="#a31515" stroke-width="1"/><circle cx="200" cy="200" r="60" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="120" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="180" stroke="#a31515" stroke-width="1" fill="none"/></g>
+  </svg>
+  <!-- bg web right -->
+  <svg class="bg-web" style="right:-40px;bottom:40px;width:260px;height:260px;opacity:.06;" viewBox="0 0 400 400" fill="none">
+    <g><line x1="200" y1="200" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="400" stroke="#a31515" stroke-width="1"/><circle cx="200" cy="200" r="60" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="120" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="180" stroke="#a31515" stroke-width="1" fill="none"/></g>
+  </svg>
+
+  <div class="container">
+    <div class="about-layout">
+      <!-- Left text -->
+      <div class="about-left" data-aos>
+        <div class="about-eyebrow">
+          🕷️ Behind the Mask
+        </div>
+        <h2 class="about-name">JEYASHMIKA<br>D K.</h2>
+        <p class="about-text">B.E. Computer Science and Engineering student at Velammal Institute of Technology (2022–2026) with a strong CGPA of 9.09, passionate about building intelligent, data-driven software solutions.</p>
+        <p class="about-text">From developing ML-based fraud detection systems to building Java-powered student management platforms, I thrive on turning complex problems into clean, functional digital products.</p>
+        <p class="about-text">Web Development intern at WIZTECH Automation Solutions. NPTEL certified in Cloud Computing and Java from IIT Kharagpur. Based in Tiruvarur, Tamil Nadu.</p>
+
+        <div class="stack-label">Primary Tech Stack</div>
+        <div class="pills">
+          <span class="pill">Java</span>
+          <span class="pill">MySQL</span>
+          <span class="pill">HTML/CSS</span>
+          <span class="pill">JavaScript</span>
+          <span class="pill">Python</span>
+          <span class="pill">Cloud Computing</span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box"><div class="stat-val">9.09</div><div class="stat-lbl">CGPA</div></div>
+          <div class="stat-box"><div class="stat-val">2+</div><div class="stat-lbl">Projects</div></div>
+          <div class="stat-box"><div class="stat-val">NPTEL</div><div class="stat-lbl">Certified</div></div>
+          <div class="stat-box"><div class="stat-val">CSE</div><div class="stat-lbl">2022–2026</div></div>
+        </div>
+      </div>
+
+      <!-- Right photo -->
+      <div class="about-right" data-aos>
+        <div class="about-thread"></div>
+        <div class="about-circle">
+          <img src="jeyashmika-photo.jpg" alt="Jeyashmika D K"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ SKILLS ══════════════════ -->
+<section id="skills" class="section section-white">
+  <!-- bg web center -->
+  <svg class="bg-web" style="left:50%;top:50%;transform:translate(-50%,-50%);width:700px;height:700px;opacity:.04;" viewBox="0 0 400 400" fill="none">
+    <g><line x1="200" y1="200" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="340" y2="340" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="60" y2="340" stroke="#a31515" stroke-width="1"/><circle cx="200" cy="200" r="50" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="100" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="150" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="190" stroke="#a31515" stroke-width="1" fill="none"/></g>
+  </svg>
+
+  <!-- Hanging Spider-Man -->
+  <div class="hanging-spider">
+    <div class="spider-thread" style="height:180px;"></div>
+    <div class="spider-emoji">🕷️</div>
+  </div>
+
+  <div class="container">
+    <div class="section-header" data-aos>
+      <div class="section-eyebrow">🕸️ Arsenal & Expertise</div>
+      <h2 class="section-title">TECHNICAL SKILLS.</h2>
+      <div class="section-underline"></div>
+    </div>
+
+    <div class="skills-grid" data-aos>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">Java</div><div class="sk-cat">Languages</div></div></div>
+        <div class="sk-level">Advanced</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">MySQL / JDBC</div><div class="sk-cat">Database</div></div></div>
+        <div class="sk-level">Advanced</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">HTML / CSS / JS</div><div class="sk-cat">Web Development</div></div></div>
+        <div class="sk-level">Proficient</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">Python</div><div class="sk-cat">Languages</div></div></div>
+        <div class="sk-level">Proficient</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">Cloud Computing</div><div class="sk-cat">Infrastructure</div></div></div>
+        <div class="sk-level">Proficient</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">Machine Learning</div><div class="sk-cat">AI / Data</div></div></div>
+        <div class="sk-level">Intermediate</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">OOP / DBMS</div><div class="sk-cat">Core CS</div></div></div>
+        <div class="sk-level">Advanced</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-info"><div class="skill-dot"></div><div><div class="sk-name">Unity / AR Dev</div><div class="sk-cat">Tools</div></div></div>
+        <div class="sk-level">Beginner</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ PROJECTS ══════════════════ -->
+<section id="projects" class="section section-light" style="position:relative;">
+  <!-- bg web top-right -->
+  <svg class="bg-web" style="right:-60px;top:-60px;width:500px;height:500px;opacity:.05;" viewBox="0 0 400 400" fill="none">
+    <g><line x1="400" y1="0" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="50" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="150" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="250" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="350" y2="400" stroke="#a31515" stroke-width="1"/><line x1="400" y1="0" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><circle cx="400" cy="0" r="80" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="150" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="230" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="400" cy="0" r="310" stroke="#a31515" stroke-width="1" fill="none"/></g>
+  </svg>
+
+  <!-- Standing Spider-Man bottom-left -->
+  <div class="standing-spider">
+    <div class="standing-spider-img">🦸</div>
+  </div>
+
+  <div class="container">
+    <div class="section-header" data-aos>
+      <div class="section-eyebrow">🕸️ Featured Works</div>
+      <h2 class="section-title">PROJECTS.</h2>
+      <div class="section-underline"></div>
+    </div>
+
+    <div class="projects-grid" data-aos>
+      <!-- Project 1 -->
+      <div class="proj-card">
+        <div>
+          <div class="proj-header">
+            <div class="proj-title">Medical Insurance Fraud Detection</div>
+            <div class="proj-badge">ML Project</div>
+          </div>
+          <p class="proj-desc">Developed a machine learning-based system to identify fraudulent medical insurance claims. Applied classification algorithms with improved accuracy using data preprocessing. Minimized false claims and financial losses through predictive analytics.</p>
+        </div>
+        <div class="proj-tags">
+          <span class="proj-tag">Python</span>
+          <span class="proj-tag">Machine Learning</span>
+          <span class="proj-tag">Data Preprocessing</span>
+          <span class="proj-tag">Classification</span>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="proj-card">
+        <div>
+          <div class="proj-header">
+            <div class="proj-title">Student Management System</div>
+            <div class="proj-badge">Java Project</div>
+          </div>
+          <p class="proj-desc">Developed a Java-based Student Management System with MySQL database integration using JDBC. The application supports full CRUD operations with a GUI interface for managing student records efficiently.</p>
+        </div>
+        <div class="proj-tags">
+          <span class="proj-tag">Java</span>
+          <span class="proj-tag">MySQL</span>
+          <span class="proj-tag">JDBC</span>
+          <span class="proj-tag">GUI</span>
+          <span class="proj-tag">CRUD</span>
+        </div>
+      </div>
+
+      <!-- Project 3 — Internship -->
+      <div class="proj-card">
+        <div>
+          <div class="proj-header">
+            <div class="proj-title">Keyboard Tester Web App</div>
+            <div class="proj-badge">Internship</div>
+          </div>
+          <p class="proj-desc">Built during Web Development Internship at WIZTECH Automation Solutions. A fully functional keyboard tester application built using HTML, CSS, and JavaScript to detect and display key presses interactively in real time.</p>
+        </div>
+        <div class="proj-tags">
+          <span class="proj-tag">HTML</span>
+          <span class="proj-tag">CSS</span>
+          <span class="proj-tag">JavaScript</span>
+          <span class="proj-tag">WIZTECH</span>
+        </div>
+      </div>
+
+      <!-- Project 4 — Certifications showcase -->
+      <div class="proj-card">
+        <div>
+          <div class="proj-header">
+            <div class="proj-title">NPTEL Certifications</div>
+            <div class="proj-badge">IIT Kharagpur</div>
+          </div>
+          <p class="proj-desc">Completed "Cloud Computing" and "Java" certification courses through NPTEL, IIT Kharagpur — strengthening core programming foundations and modern cloud infrastructure knowledge.</p>
+        </div>
+        <div class="proj-tags">
+          <span class="proj-tag">Cloud Computing</span>
+          <span class="proj-tag">Java</span>
+          <span class="proj-tag">NPTEL</span>
+          <span class="proj-tag">IIT Kharagpur</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ CONTACT ══════════════════ -->
+<section id="contact" class="section section-white">
+  <!-- bg web bottom-left -->
+  <svg class="bg-web" style="left:-60px;bottom:-60px;width:480px;height:480px;opacity:.05;" viewBox="0 0 400 400" fill="none">
+    <g><line x1="0" y1="400" x2="400" y2="0" stroke="#a31515" stroke-width="1"/><line x1="0" y1="400" x2="350" y2="0" stroke="#a31515" stroke-width="1"/><line x1="0" y1="400" x2="250" y2="0" stroke="#a31515" stroke-width="1"/><line x1="0" y1="400" x2="150" y2="0" stroke="#a31515" stroke-width="1"/><line x1="0" y1="400" x2="50" y2="0" stroke="#a31515" stroke-width="1"/><circle cx="0" cy="400" r="100" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="0" cy="400" r="180" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="0" cy="400" r="270" stroke="#a31515" stroke-width="1" fill="none"/></g>
+  </svg>
+
+  <!-- Upside-down hanging spider (bottom right) -->
+  <div style="position:absolute;bottom:0;right:80px;z-index:20;display:flex;flex-direction:column;align-items:center;">
+    <div style="font-size:80px;transform:rotate(180deg);filter:drop-shadow(0 4px 16px rgba(0,0,0,.2));animation:swing 2.5s ease-in-out infinite alternate;">🕷️</div>
+    <div style="width:2px;height:160px;background:linear-gradient(to bottom,#888,transparent);opacity:.5;"></div>
+  </div>
+
+  <div class="container">
+    <div class="section-header" data-aos>
+      <div class="section-eyebrow">🕸️ Get In Touch</div>
+      <h2 class="section-title">CONTACT.</h2>
+      <div class="section-underline"></div>
+      <p style="color:#6b7280;font-size:14px;font-weight:500;margin-top:16px;">Open to opportunities in Web Development, Java Development & Software Engineering roles.</p>
+    </div>
+
+    <!-- Contact quick links -->
+    <div class="contact-links" data-aos>
+      <a href="tel:+916374134269" class="contact-link">📞 +91 6374134269</a>
+      <a href="mailto:jeyashmika2807@gmail.com" class="contact-link">✉️ jeyashmika2807@gmail.com</a>
+      <a href="#" class="contact-link">📍 Tiruvarur, Tamil Nadu</a>
+    </div>
+
+    <!-- Form -->
+    <div class="contact-form-wrap" data-aos>
+      <div class="success-msg" id="successMsg">
+        <div class="success-check">✓</div>
+        <div class="success-title">Message Sent!</div>
+        <p class="success-sub">Thanks for reaching out. Jeyashmika will get back to you shortly.</p>
+      </div>
+      <form id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" placeholder="Peter Parker" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Your Email</label>
+            <input type="email" class="form-input" placeholder="peter@stark.com" required/>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:18px;">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" rows="4" placeholder="Let's build something amazing together..." required></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <a href="#" class="footer-logo"><span>J</span>EYASHMIKA.</a>
+    <div class="footer-mid">CSE Engineer · Velammal Institute of Technology · Tiruvarur, Tamil Nadu</div>
+    <div class="footer-right">2025 · Built with ❤️</div>
+  </div>
+</footer>
+
+<!-- ══════════════════ JS ══════════════════ -->
+<script>
+// ── NAVBAR scroll ──────────────────────────────
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
+});
+
+// ── HERO MASK EFFECT ───────────────────────────
+const hero = document.getElementById('hero');
+const layerTop = document.getElementById('layer-top');
+let cx = window.innerWidth/2, cy = window.innerHeight/2;
+let tx = cx, ty = cy;
+let maskSize = 0;
+let targetSize = 0;
+let isHovered = false;
+
+// Smooth lerp animation
+function lerp(a,b,t){return a+(b-a)*t;}
+
+function animateMask(){
+  cx = lerp(cx, tx, 0.1);
+  cy = lerp(cy, ty, 0.1);
+  maskSize = lerp(maskSize, targetSize, 0.08);
+
+  const mask = `radial-gradient(circle ${maskSize}px at ${cx}px ${cy}px, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,1) 100%)`;
+  layerTop.style.webkitMaskImage = mask;
+  layerTop.style.maskImage = mask;
+  requestAnimationFrame(animateMask);
+}
+animateMask();
+
+hero.addEventListener('mousemove', e => {
+  tx = e.clientX;
+  ty = e.clientY;
+});
+
+hero.addEventListener('mouseenter', () => {
+  isHovered = true;
+  targetSize = 180;
+});
+
+hero.addEventListener('mouseleave', () => {
+  isHovered = false;
+  targetSize = 0;
+});
+
+// Touch support
+hero.addEventListener('touchmove', e => {
+  const t = e.touches[0];
+  tx = t.clientX;
+  ty = t.clientY;
+  targetSize = 180;
+});
+hero.addEventListener('touchend', () => { targetSize = 0; });
+
+// ── MARQUEE ───────────────────────────────────
+const items = [
+  'WEB DEVELOPMENT', 'JAVA DEVELOPER', 'MACHINE LEARNING',
+  'CLOUD COMPUTING', 'CSE ENGINEER', 'NPTEL CERTIFIED',
+  'OOP EXPERT', 'DATABASE DESIGN'
+];
+
+function buildMarquee(id, count=3){
+  const el = document.getElementById(id);
+  let html = '';
+  for(let r=0;r<count;r++){
+    items.forEach(item=>{
+      html += `<span class="marquee-item">${item}<span class="marquee-dot">◆</span></span>`;
+    });
+  }
+  el.innerHTML = html;
+}
+buildMarquee('mq1');
+buildMarquee('mq2');
+
+// ── SCROLL REVEAL ─────────────────────────────
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.opacity='1';
+      e.target.style.transform='translateY(0)';
+    }
+  });
+},{threshold:0.1});
+
+document.querySelectorAll('[data-aos]').forEach(el=>{
+  el.style.opacity='0';
+  el.style.transform='translateY(36px)';
+  el.style.transition='opacity .7s ease, transform .7s ease';
+  observer.observe(el);
+});
+
+// ── CONTACT FORM ──────────────────────────────
+document.getElementById('contactForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  this.style.display='none';
+  const msg = document.getElementById('successMsg');
+  msg.style.display='block';
+  setTimeout(()=>{
+    msg.style.display='none';
+    this.style.display='block';
+    this.reset();
+  },4000);
+});
+</script>
+
+</body>
+</html>
