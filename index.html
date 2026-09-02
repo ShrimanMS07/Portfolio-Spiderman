@@ -153,8 +153,15 @@
   }
   .container{max-width:1100px;margin:0 auto;padding:0 40px;}
 
-  /* Web background decorators */
-  .bg-web{position:absolute;pointer-events:none;}
+  /* Web background decorators — slow continuous rotation + gentle breathing */
+  .bg-web{position:absolute;pointer-events:none;animation:bgWebDrift 90s linear infinite;}
+  @keyframes bgWebDrift{
+    0%{transform:rotate(0deg) scale(1);}
+    50%{transform:rotate(180deg) scale(1.08);}
+    100%{transform:rotate(360deg) scale(1);}
+  }
+  /* Idle bob for small spider characters */
+  @keyframes spiderBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
 
   /* ── ABOUT ── */
   .about-layout{display:flex;gap:80px;align-items:flex-start;}
@@ -163,6 +170,9 @@
     position:relative;margin-top:0;
   }
   .about-thread{width:2px;height:220px;background:linear-gradient(to bottom,transparent,#a31515);}
+  /* Small spider character, left side of About */
+  .about-spider-left{position:absolute;bottom:24px;left:16px;z-index:5;pointer-events:none;opacity:.85;}
+  .about-spider-left-img{font-size:64px;line-height:1;filter:drop-shadow(0 3px 14px rgba(0,0,0,.18));animation:spiderBob 4s ease-in-out infinite;}
   .about-circle{
     width:280px;height:280px;border-radius:50%;
     border:6px solid #a31515;overflow:hidden;
@@ -266,7 +276,7 @@
 
   /* Standing spider man left */
   .standing-spider{position:absolute;bottom:0;left:20px;z-index:20;pointer-events:none;}
-  .standing-spider-img{font-size:120px;line-height:1;filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));}
+  .standing-spider-img{font-size:120px;line-height:1;filter:drop-shadow(0 4px 20px rgba(0,0,0,.2));animation:spiderBob 3.5s ease-in-out infinite;}
 
   /* ── CONTACT ── */
   .contact-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:36px;}
@@ -399,7 +409,7 @@
     <!-- Jeyashmika's photo sits underneath -->
     <img src="jeyashmika-photo.jpg" alt="Jeyashmika" class="base-face">
     <!-- The Spider-Man mask sits directly on top, and fades away on hover/tap -->
-    <img src="spiderman-mask-full.jpg" alt="Spider-Man Mask" class="overlay-mask">
+    <img src="spiderman-composite.jpg" alt="Spider-Man Mask" class="overlay-mask">
   </div>
 
   <!-- Hero Text -->
@@ -437,6 +447,11 @@
   <svg class="bg-web" style="right:-40px;bottom:40px;width:260px;height:260px;opacity:.06;" viewBox="0 0 400 400" fill="none">
     <g><line x1="200" y1="200" x2="400" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="400" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="400" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="0" y2="200" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="0" stroke="#a31515" stroke-width="1"/><line x1="200" y1="200" x2="200" y2="400" stroke="#a31515" stroke-width="1"/><circle cx="200" cy="200" r="60" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="120" stroke="#a31515" stroke-width="1" fill="none"/><circle cx="200" cy="200" r="180" stroke="#a31515" stroke-width="1" fill="none"/></g>
   </svg>
+
+  <!-- Small spider character, bottom-left -->
+  <div class="about-spider-left">
+    <div class="about-spider-left-img">🕷️</div>
+  </div>
 
   <div class="container">
     <div class="about-layout">
@@ -700,26 +715,32 @@ window.addEventListener('scroll',()=>{
   document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50);
 });
 
-// ── HERO MASK EFFECT: cursor-follow spotlight reveal ──
-// Moving the mouse/finger over the mask "burns a hole" at that spot,
-// revealing the real photo underneath. The hole follows you smoothly.
+// ── HERO MASK EFFECT ───────────────────────────
+// Bottom layer (.base-face) is a plain photo, always fully visible.
+// Top layer (.overlay-mask) is the torn Spider-Man composite. A CSS
+// mask on the top layer erases it in a growing area on hover, letting
+// the plain photo underneath show through. Mouse-leave closes it back up.
 const heroImageContainer = document.getElementById('heroImageContainer');
 const overlayMask = heroImageContainer ? heroImageContainer.querySelector('.overlay-mask') : null;
 
 if (heroImageContainer && overlayMask) {
-  let px = 0, py = 0;       // current (animated) spotlight position, in px relative to container
-  let tx = 0, ty = 0;       // target position (where the pointer actually is)
-  let radius = 0;           // current (animated) spotlight radius
-  let targetRadius = 0;     // target radius (0 = fully masked, >0 = hole open)
+  const rect0 = heroImageContainer.getBoundingClientRect();
+  let px = rect0.width / 2, py = rect0.height / 2; // current (smoothed) cursor position
+  let tx = px, ty = py;                            // target cursor position
+  let alpha = 1, targetAlpha = 1;                  // 1 = composite fully opaque, 0 = erased at center
+  let size = 50, targetSize = 50;                  // radius (px) of the erased zone
 
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function paintMask() {
-    px = lerp(px, tx, 0.18);
-    py = lerp(py, ty, 0.18);
-    radius = lerp(radius, targetRadius, 0.12);
+    // faster smoothing for position (tracks the cursor closely),
+    // slower for alpha/size (gives the reveal/close a soft, elastic feel)
+    px = lerp(px, tx, 0.25);
+    py = lerp(py, ty, 0.25);
+    alpha = lerp(alpha, targetAlpha, 0.08);
+    size = lerp(size, targetSize, 0.08);
 
-    const mask = `radial-gradient(circle ${radius}px at ${px}px ${py}px, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 65%, rgba(0,0,0,1) 100%)`;
+    const mask = `radial-gradient(circle ${size}px at ${px}px ${py}px, rgba(0,0,0,${alpha}) 0%, rgba(0,0,0,0.85) 40%, rgba(0,0,0,1) 100%)`;
     overlayMask.style.webkitMaskImage = mask;
     overlayMask.style.maskImage = mask;
 
@@ -733,22 +754,30 @@ if (heroImageContainer && overlayMask) {
     ty = clientY - rect.top;
   }
 
-  heroImageContainer.addEventListener('mousemove', e => {
-    setTargetFromEvent(e.clientX, e.clientY);
-    targetRadius = 130; // spotlight size in px — tweak to taste
+  heroImageContainer.addEventListener('mousemove', e => setTargetFromEvent(e.clientX, e.clientY));
+  heroImageContainer.addEventListener('mouseenter', () => {
+    targetAlpha = 0;
+    targetSize = 700; // large enough to erase most of the composite near the cursor
   });
   heroImageContainer.addEventListener('mouseleave', () => {
-    targetRadius = 0;
+    targetAlpha = 1;
+    targetSize = 50;
   });
 
-  // Touch support: finger drag reveals the same way
+  // Touch support: press-and-drag reveals the same way
+  heroImageContainer.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    setTargetFromEvent(t.clientX, t.clientY);
+    targetAlpha = 0;
+    targetSize = 700;
+  }, { passive: true });
   heroImageContainer.addEventListener('touchmove', e => {
     const t = e.touches[0];
     setTargetFromEvent(t.clientX, t.clientY);
-    targetRadius = 130;
   }, { passive: true });
   heroImageContainer.addEventListener('touchend', () => {
-    targetRadius = 0;
+    targetAlpha = 1;
+    targetSize = 50;
   });
 }
 
