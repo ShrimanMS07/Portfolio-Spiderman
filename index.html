@@ -10,29 +10,95 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{font-family:'Montserrat',sans-serif;background:#fff;color:#111;overflow-x:hidden;}
+/* ── NAVBAR ── */
+#navbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:999;
 
-  /* ── NAVBAR ── */
-  #navbar{
-    position:fixed;top:0;left:0;width:100%;z-index:999;
-    background:#111;padding:16px 48px;
-    display:flex;align-items:center;justify-content:space-between;
-    transition:padding .3s,box-shadow .3s;
-  }
-  #navbar.scrolled{padding:10px 48px;box-shadow:0 4px 30px rgba(0,0,0,.3);}
-  .nav-logo{font-size:22px;font-weight:900;font-style:italic;color:#fff;text-decoration:none;letter-spacing:-.03em;}
-  .nav-logo span{color:#a31515;}
-  .nav-links{display:flex;gap:36px;list-style:none;}
-  .nav-links a{
-    color:#9ca3af;font-size:11px;font-weight:700;letter-spacing:.15em;
-    text-transform:uppercase;text-decoration:none;position:relative;transition:color .3s;
-  }
-  .nav-links a::after{
-    content:'';position:absolute;bottom:-6px;left:0;width:0;height:2px;
-    background:#a31515;transition:width .3s;box-shadow:0 0 8px rgba(163,21,21,.8);
-  }
-  .nav-links a:hover{color:#fff;}
-  .nav-links a:hover::after{width:100%;}
+    /* Transparent at top */
+    background:transparent;
 
+    padding:16px 48px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    transition:
+        background .35s ease,
+        padding .3s ease,
+        box-shadow .35s ease;
+}
+
+/* Black header appears after scrolling */
+#navbar.scrolled{
+    background:rgba(17,17,17,.97);
+    padding:10px 48px;
+    box-shadow:0 4px 30px rgba(0,0,0,.3);
+}
+
+/* Logo */
+.nav-logo{
+    font-size:22px;
+    font-weight:900;
+    font-style:italic;
+    color:#fff;
+    text-decoration:none;
+    letter-spacing:-.03em;
+    transition:color .25s ease;
+}
+
+/* Normal J remains red */
+.nav-logo span{
+    color:#ef4b43;
+    transition:color .25s ease;
+}
+
+/* Hover anywhere on logo → FULL logo red */
+.nav-logo:hover,
+.nav-logo:hover span{
+    color:#ef4b43;
+}
+
+.nav-links{
+    display:flex;
+    gap:36px;
+    list-style:none;
+}
+
+.nav-links a{
+    color:#9ca3af;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    text-decoration:none;
+    position:relative;
+    transition:color .3s;
+}
+
+.nav-links a::after{
+    content:'';
+    position:absolute;
+    bottom:-6px;
+    left:0;
+    width:0;
+    height:2px;
+    background:#ef4b43;
+    transition:width .3s;
+    box-shadow:0 0 8px rgba(239,75,67,.8);
+}
+
+.nav-links a:hover{
+    color:#fff;
+}
+
+.nav-links a:hover::after{
+    width:100%;
+}
   /* ── HERO ── */
   #hero{
     position:relative;width:100%;height:100vh;
